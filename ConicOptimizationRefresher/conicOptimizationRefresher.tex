@@ -1,0 +1,111 @@
+\documentclass{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage{parskip}
+\usepackage{graphicx}
+
+% Margins
+\usepackage[top=2.5cm, left=3cm, right=3cm, bottom=4.0cm]{geometry}
+% Colour table cells
+\usepackage[table]{xcolor}
+
+% Get larger line spacing in table
+\newcommand{\tablespace}{\\[1.25mm]}
+\newcommand\Tstrut{\rule{0pt}{2.6ex}}         % = `top' strut
+\newcommand\tstrut{\rule{0pt}{2.0ex}}         % = `top' strut
+\newcommand\Bstrut{\rule[-0.9ex]{0pt}{0pt}}   % = `bottom' strut
+
+%%%%%%%%%%%%%%%%%
+%     Title     %
+%%%%%%%%%%%%%%%%%
+\title{Conic Optimization Refresher}
+\author{Alex Hahn \\ from mosek cookbook}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+%%%%%%%%%%%%%%%%%
+%   intro formulation   %
+%%%%%%%%%%%%%%%%%
+\section{Types of Cones}
+Conic optimization is a class of convex optimization problems. The geneneral form of a conic optimization problem is:
+
+$$\text{maximize } \mathbf{c}^T\mathbf{x}$$
+$$\text{subject to } \mathbf{Ax} + \mathbf{b} \in \mathcal{K} $$
+where $\mathcal{K}$ is a product of the following basic types of cones:
+
+\begin{itemize}
+\item{\textbf{Linear cone:}}
+\end{itemize}
+$$\mathbb{R}, \mathbb{R}^n_+, {0}$$
+
+\begin{itemize}
+\item{\textbf{Quadratic cone and rotated quadratic cone:}}
+\end{itemize}
+The quadratic cone is the set
+$$\mathcal{Q}^n = \left\{ x \in \mathbb{R} \bigg| x_1 \geq \sqrt{x_2^2 +\cdots+ x_n^2}\right\}$$
+The rotated quadratic cone is the set
+$$\mathcal{Q}_r^n = \left\{ x \in \mathbb{R} \bigg|2x_1x_2\geq x_3^2+\cdots + x_n^2, x_1, x_2\geq 0\right\}$$
+
+Together the union of these two cones covers the class of SOCO (second-order cone optimization)
+problems which includes all QO (quadratic optimization) and QCQO (quadratically constrained
+quadratic optimization) problems as well.
+
+\begin{itemize}
+\item{\textbf{Primal power cone:}}
+\end{itemize}
+
+$$\mathcal{P}^{\alpha, 1-\alpha}_n = \left\{ x \in \mathcal{R}^n\bigg|x_1^\alpha x_2^{1-\alpha}\geq\sqrt{x_3^2+\cdots+x_n^2},x_1,x_2 \geq 0\right\}$$
+
+\begin{itemize}
+\item{\textbf{Primal exponential cone:}}
+\end{itemize}
+
+$$K_{\text{exp}} = \left\{ x \in \mathcal{R}^3\bigg|x_1\geq x_2\text{exp}\left(\frac{x_3}{x_2}\right),x_1,x_2 \geq 0\right\}$$
+
+\begin{itemize}
+\item{\textbf{Semidefinite cone:}}
+\end{itemize}
+
+$$\mathcal{S}^n_+=\{X \in \mathbb{R}^{n\times n}| X\text{ is symmetric positive semidefinite}$$
+
+Semidefinite cones model SDO problems.
+
+Each of these cones allow formulating different types of convex constraints.
+
+\section{Selection of Conic Constraints}
+
+Examples of real world constraints (financial)and how to convert them to conic form.
+
+\subsection{Maximum function}
+
+Model the maximum constraint max($x_1, x_2, ... , x_n)\leq c$ using n linear constraints introduces with an auxiliary variable $t$:
+
+\begin{align}
+  \begin{split}
+    t &\leq c, \\
+    t &\geq x_1, \\
+    &\vdots \\
+    t &\geq x_n.
+  \end{split}
+\end{align}
+
+For example we can write the constraints max$(x_i,0)\leq c_i, 1,...,n$ as
+$$\mathbf{t} \leq \mathbf{c}, \mathbf{t}\geq \mathbf{x}, \mathbf{t}\geq \mathbf{0},$$
+where \textbf{t} is an $n$-dimensional vector.
+
+\textbf{Positive and negative part}//
+
+A special case of modeling the maximum function is to model the positive part $x^+$ and the negative part $x^-$ of a variable $x$.
+We define these as $x^+=\text{max}(x,0)$ and $x^-=\text{max}(-x,0)$. Model them explicitly with the above methodology and
+the inequatlities $x^+=\text{max}(x,0)$ and $x^-=\text{max}(-x,0)$, or implicitly with the constraints:
+
+\begin{align}
+  x &= x^+ - x^-, \\
+  x^+, x^- &\geq 0.
+\end{align}
+
+\end{document}
