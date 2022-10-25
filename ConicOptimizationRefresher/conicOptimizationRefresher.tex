@@ -97,15 +97,56 @@ For example we can write the constraints max$(x_i,0)\leq c_i, 1,...,n$ as
 $$\mathbf{t} \leq \mathbf{c}, \mathbf{t}\geq \mathbf{x}, \mathbf{t}\geq \mathbf{0},$$
 where \textbf{t} is an $n$-dimensional vector.
 
-\textbf{Positive and negative part}//
+\subsection{Positive and negative part}
 
 A special case of modeling the maximum function is to model the positive part $x^+$ and the negative part $x^-$ of a variable $x$.
 We define these as $x^+=\text{max}(x,0)$ and $x^-=\text{max}(-x,0)$. Model them explicitly with the above methodology and
 the inequatlities $x^+=\text{max}(x,0)$ and $x^-=\text{max}(-x,0)$, or implicitly with the constraints:
 
-\begin{align}
-  x &= x^+ - x^-, \\
-  x^+, x^- &\geq 0.
-\end{align}
+
+$$x = x^+ - x^-,$$
+$$x^+, x^- \geq 0.$$
+
+Note, there is still a degree of freedom in both the implicit and explicit magnitudes of $x^+$ and $x^-$. In the
+explicit case we have inequalities and in the implicit case only the difference of the variables is constrained.
+Ultimately it is possible for both $x^+$ and $x^-$ to be positive, allowing optimal solutions where $x^+ = \text{max}(x,0)$
+and $x^-1=\text{max}(-x,0)$ does not hold.
+
+Theoretically we can introduce a complimentarity contraint $x^+x^-=0$ (or $\langle\textbf{x}^+,\textbf{x}^-\rangle=0$)
+but that is non-convex/ can't be modeled. There are two workarounds to ensure that $x^+ = \text{max}(x,0)$
+and $x^-1=\text{max}(-x,0)$ hold the optimal solution: 1) penalize the magnitude of the two solutions, so if both
+are positive in any one solution, the solver could always improve the objective by reducing them until either one
+becomes zero. 2) formulate a mixed integer problem.
+
+\subsection{Absolute value}
+We can model the absolute value constraint $|x| \leq c$ by using the maximum function observing that
+$|x|=\text{max}(x,-x)$:
+$$-c\leq x\leq c$$
+
+Or you could use a quadratic cone:
+$$(c,x)\in \mathcal{Q}^2$$
+
+\subsection{Sum of largest elements}
+
+The sum of the m largest elements of a vector $\mathbf{x}$ is the optimal solution of the LO problem:
+$$\text{maximize } \mathbf{x}^T\mathbf{z}$$
+$$\text{subject to } \mathbf{1}^T\mathbf{z}=m,$$
+$$\mathbf{0}\leq\mathbf{z}\leq\mathbf{1}$$
+
+Here \textbf{x} cannot be a variable as this would result in a nonlinear objective. Looking at the dual of
+the problem:
+$$\text{minimize } mt + \mathbf{1}^T\mathbf{u}$$
+$$\text{subject to } \mathbf{u} + t \geq \mathbf{x},$$
+$$\mathbf{u} \geq 0.$$
+
+This is the same problem as min$_t$ $mt + \sum_i\text{max}(0,x_i-t)$, in which $x$ can be a variable and thus optimized.
+
+
+
+
+
+
+
+
 
 \end{document}
