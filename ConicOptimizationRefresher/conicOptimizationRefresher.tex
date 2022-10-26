@@ -141,6 +141,27 @@ $$\mathbf{u} \geq 0.$$
 
 This is the same problem as min$_t$ $mt + \sum_i\text{max}(0,x_i-t)$, in which $x$ can be a variable and thus optimized.
 
+\subsection{Linear combination of largest elements}
+
+Selecting \textbf{z} tot have an upper bound $\mathbf{c}\geq\mathbf{0}$, and a real number
+$0\leq b \leq c_\text{sum}$ instead of integer $m$, where $c_\text{sum}=\sum_ic_i$:
+$$\text{maxmize } \mathbf{x}^T\mathbf{z}$$
+$$\text{subject to } \mathbf{1}^T\mathbf{Z} = c_\text{sum} - b,$$
+$$\mathbf{0}\leq\mathbf{z}\leq\mathbf{c}.$$
+
+This has the optimal objective $c^\text{frac}x_{ib} + \sum_{i>i_b}c_ix_i$ where $i_b$ is such that
+$\sum_{i=1}^{i_b-1}c_i<b\leq\sum^{i_b}_{i=1}c_i$, and $c_{i_b}^\text{frac}=\sum^{i_b}_{i=1}c_i-b<c_{i_b}.$
+The dual of this problem:
+
+$$\text{minimize } (c_\text{sum}-b)t+\mathbf{c}^T\mathbf{u}$$
+$$\text{subject to } \mathbf{u}+t\geq\mathbf{x},$$
+$$\mathbf{u}\geq\mathbf{0}.$$
+
+which is the same as $\text{min}_t(c_\text{sum}-b)t+\sum_ic_i\text{max}(0,x_i-t)$.
+
+
+
+
 
 
 
