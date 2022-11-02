@@ -1,5 +1,4 @@
 \documentclass{article}
-
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath,amssymb}
@@ -159,13 +158,92 @@ $$\mathbf{u}\geq\mathbf{0}.$$
 
 which is the same as $\text{min}_t(c_\text{sum}-b)t+\sum_ic_i\text{max}(0,x_i-t)$.
 
+\subsection{Manhattan Norm}
+Let $\mathbf{x}\in \mathbb{R}^n$ with the standard 1-norm / Manhattan norm. A
+1-norm constrant $||\mathbf{x}||_1\leq c||$ can be formed by modeling the
+absolute value for each coordinate:
+$$\mathbf{z}\leq x\leq \mathbf{z}, \sum_{i=1}^nz_i=c,$$
+where \textbf{z} is an auxilliary variable
 
+\subsection{Euclidean Norm}
+Let $\mathbf{x} \in \mathbb{R}^n$ with the standard 2-norm / Euclidean norm
+definition $||\mathbf{x}||_2 = \sqrt{x_1^2+\cdots+x_n^2}$. A Euclidean
+norm constraint $||\mathbf{x}||_2\leq c$ can be modelled using a quadratic
+cone:
+$$(c,\mathbf{x}) \in \mathcal{Q}^{n+1}$$
 
+\subsection{Squared Euclidean Norm}
+Let $\mathbf{x} \in \mathbb{R}^n$ take the square of the Euclidean norm
+$||\mathbf{x}||^2_2=\mathbf{x}^T\mathbf{x}=x_1^2+\cdots+x_n^2$. We can
+model the squared Euclidean norm or sum-of-squared constraint
+$||\mathbf{x}||_2^2\leq c$ using a rotated quadratic cone:
+$$(c,\frac{1}{2},\mathbf{x})\in\mathcal{Q}_r^{n+2}$$
 
+\subsection{Quadratic Form}
+Let $\mathbf{x} \in \mathbb{R}^n$ and $\mathbf{Q}\in S^n_+$ ie a symmetric
+positive semidefinite matrix. We can model a quadratic form constraint
+$\frac{1}{2}\mathbf{x}^T\mathbf{Q}\mathbf{x}\leq c$ using either a
+quadratic cone or a rotated quadratic cone. Observe that there exists
+a (non unique) matrix $\mathbf{G}\in\mathbb{R}^{n \times k}$ such that
+$\mathbf{Q} = \mathbf{G}\mathbf{G}^T$. Common ways of computing $\mathbf{G}$
+are:
+\begin{itemize}
+\item{Cholesky decomposition:} $\mathbf{Q}=\mathbf{C}\mathbf{C}^T$, where
+  $\mathbf{C}$ is a lower triangular matrix with nonnegative entries on
+  the diagonal. With this decompostion we have
+  $\mathbf{G}=\mathbf{C}\in\mathbf{R}^{n\times n}$.
+\item{Eigenvalue decomposition:} $\mathbf{Q}=\mathbf{V}\mathbf{D}\mathbf{V}^T$,
+  where the diagonal matrix $\mathbf{D}$ contains the (nonnegative)
+  eigenvalues of $\mathbf{Q}$ and the unitary matriix $\mathbf{V}$ contains
+  the corresponding eigenvectors in its columns. From this decomposition we
+  have $\mathbf{G}=\mathbf{V}\mathbf{D}^{\frac{1}{2}}\in\mathbb{R}^{n\times n}$.
+\item{Matrix square root:} $\mathbf{Q}=\mathbf{Q}^{1/2}\mathbf{Q}^{1/2}$, where
+  $\mathbf{Q}^{1/2}$ is the symmetric positive semidefinite "square root"
+  matrix of $\mathbf{Q}$. From this decomposition we have
+  $\mathbf{G}=\mathbf{Q}^{1/2} \in \mathbb{R}^{n\times n}$.
+\item{Factor model:} if $\mathbf{Q}$ is a covariance matrix of some date, then we can
+  approximate the data series with the combination of $k \ll n$ common factors. We
+  have the decomposition $\mathbf{Q}=\beta\mathbf{Q}_F\beta^T + \mathbf{D}$,
+  where $\mathbf{Q}_F\in \mathbb{R}^{k\times k}$ is the covariance of the
+  factors, $\beta\in\mathbb{R}^{n\times k}$ is the exposure of the data series
+  to each factor, and $\mathbf{D}$ is diagonal. From this, by computing the
+  Cholesky decomposition $\mathbf{Q}_F=\mathbf{F}\mathbf{F}^T$ we have
+  $\mathbf{G}=[\beta\mathbf{F},\mathbf{D}^{1/2}]\in\mathbb{R}^{n\times(n+k)}$.
+  The advantage of factor models is that $\mathbf{G}$ is very sparse and the
+  factors have a direct financial interpretation.
+\end{itemize}
 
+After obtaining $\mathbf{G}$, we can write the quadratic form constraint as a
+sum-of-squares $\frac{1}{2}\mathbf{x}^T\mathbf{}G^T\mathbf{x}\leq c$ which
+is a squared Euclidean norm constraint
+$\frac{1}{2}||\mathbf{G}^T\mathbf{x}||_2^2 \leq c$.
+We can choose to model this using the rotated quadratic cone as
+$$(c,1,\mathbf{G}^T\mathbf{x})\in \mathcal{Q}^{k+2},$$
+or we can choose to model its square root using the quadratic cone as
+$$(\sqrt{c}, \mathbf{G}^T\mathbf{x})\in\mathcal{Q}^{k+1}$$
 
+Usually the quadratic cone is used to model 2-norm constraints while the
+rotated quadratic cone is used to model quadratic functions.
 
+\subsection{Power}
+Let $x\in \mathbb{R}$ and $\alpha>1$, we can model a power constraint
+$c \geq |x|^\alpha$ or equivalently $c^{1/\alpha}\geq|x|$ using a power
+cone:
+$$(c,1,x) \in \mathcal{P}_3^{1/\alpha,(\alpha-1)/\alpha}$$
 
+\subsection{Exponential}
+Let $x\in\mathbb{R}$ and $\alpha>1$, we can model an exponential
+constraint $t\geq e^x$ using the exponential cone:
+$$(t,1,x)\in K_\text{exp}$$
+
+\subsection{Log-sum-exp}
+Let $x_1,...,x_n \in \mathbb{R}$, we can model a log-sum-exp
+constraint $t\geq \text{log}(\sum^n_{i=1}e^{x_i})$ with:
+$$\sum^n_{i=1}u_i \leq 1,$$
+$$(u_i,1,x_i-t) \in K_\text{exp}, i=1,...n$$
+
+\subsection{Perspective of Function}
+The perspective of a function $f(x)$ is defined as $sf(x/s)$ on $s>0$.
 
 
 
