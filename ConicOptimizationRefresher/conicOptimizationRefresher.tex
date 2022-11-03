@@ -243,9 +243,86 @@ $$\sum^n_{i=1}u_i \leq 1,$$
 $$(u_i,1,x_i-t) \in K_\text{exp}, i=1,...n$$
 
 \subsection{Perspective of Function}
-The perspective of a function $f(x)$ is defined as $sf(x/s)$ on $s>0$.
+The perspective of a function $f(x)$ is defined as $sf(x/s)$ on $s>0$. For any
+conic representation of $t\geq f(x)$ we can inspect $t\geq sf(x/s)$ by substituting
+all constants $c$ with their homogenized counterpart $sc$.
 
+\subsection{Perspective of log-sum-exp}
+let $x_1,...,x_n\in\mathbb{R}$. We can model the perdpective of the log-sum-exp
+constraint $t \geq s\text{log}(\sum^n_{i=1}e^{x_i/s})$ by applying:
+$$\sum^n_{i=1}u_i \leq s,$$
+$$(u_i,s,x_i-t) \in K_\text{exp}, i=1,...,n$$
 
+\section{Traditional Quadratic Models}
+How to convert traditional QO or QCQO problems into conic optimization form (much
+more efficient computationally).
+
+\subsection{Quadratic Optimization}
+The standard form of the Quadratic Optimization problem is:
+\begin{align}
+  \begin{split}
+    \text{minimize ~~~} \frac{1}{2}\mathbf{x}^T\mathbf{Q}\mathbf{x}+\mathbf{c}^T&\mathbf{x} \\
+    \text{subject to ~~~~~~~~~~~~~~~ } \mathbf{A}&\mathbf{x}=\mathbf{b}, \\
+    &\mathbf{x}\geq\mathbf{0} \\
+  \end{split}
+\end{align}
+
+The matrix $\mathbf{Q} \in \mathbb{R}^{n\times n}$ must be symmetric positive semidefinite,
+otherwise the objective function would not be convex.
+
+Assuming the factorization $\mathbf{Q}=\mathbf{G}{G}^T$ with
+$\mathbf{G}\in\mathbb{R}^{n\times k}$, we can reformulat the QO as a conic problem by applying
+the previous sections methodology:
+\begin{align}
+  \begin{split}
+    \text{minimize ~~~} t+\mathbf{c}^T\mathbf{x} \\
+    \text{subject to ~~~~~~~~ } \mathbf{A}&\mathbf{x}=\mathbf{b}, \\
+    &\mathbf{x}\geq\mathbf{0}, \\
+    (t,1,\mathbf{G}^T&\mathbf{x}) \in \mathcal{Q}_r^{k+2}
+  \end{split}
+\end{align}
+
+\subsection{Quadratically Constrained Quadratic Optimization}
+Consider the quadratically constrained quadratic optimization (QCQO) problem of the form
+
+\begin{align}
+  \begin{split}
+    \text{minimize ~~~} \frac{1}{2}\mathbf{x}^T\mathbf{Q}_0\mathbf{x}+\mathbf{c}_0^T&\mathbf{x} + a_0 \\
+    \text{subject to ~ } \frac{1}{2}\mathbf{x}^T\mathbf{Q}_i\mathbf{x}+\mathbf{c}_i^T&\mathbf{x} + a_i \leq 0,~i=1,...,m. \\
+  \end{split}
+\end{align}
+
+The matrices $\mathbf{Q}_i \in\mathbf{R}^{n\times n}, i = 0,...,m$ must all be symmetric positive
+semidefinite, otherwise the optimization problem would not be convex.
+
+Assuming the factorization $\mathbf{Q}=\mathbf{G}_i\mathbf{G}^T_i$ with
+$\mathbf{G}_i\in\mathbb{R}^{n\times k_i}$, we can reformulate the problem
+as a conic problem:
+
+\begin{align}
+  \begin{split}
+    &\text{minimize ~} t_0+\mathbf{c}_0^T\mathbf{x}+_0 \\
+    &\text{subject to } T_i + \mathbf{c}_i^T\mathbf{x} + a_i \leq 0,~ i=1,...m, \\
+    &(t_i,1,\mathbf{G}^T_i\mathbf{x}) \in \mathcal{Q}_r^{k_i+2}, i=0,..., \\
+  \end{split}
+\end{align}
+
+\subsection{Practical Benefits of Conic Model}
+The key step is the model conversion is to transform quadratic terms $\mathbf{x}^T\mathbf{Q}\mathbf{x}$
+using the factorization $\mathbf{Q}=\mathbf{G}\mathbf{G}^T$, where $\mathbf{G}\in\mathbb{R}^{n\times k}$.
+Assuming $k\ll$, it results in the following benefits:
+\begin{itemize}
+\item{ The storage requirement $nk$ of $\mathbf{G}$ is much lower than the storage requirement
+  $n^2/2$ of $\mathbf{Q}$.}
+\item{The amount of work to evaluate $\mathbf{x}^T\mathbf{Q}\mathbf{x}$ is proportional to $n^2$
+  whereas the work to evaluate $||\mathbf{G}^T\mathbf{x}||^2_2$ is proportional to $nk$ onlt.}
+\item{ No need to numerically validate positive semidefiniteness of $\mathbf{Q}$. This would
+  otherwise be difficult given that the presence of rounding errors can make $\mathbf{Q}$ indefinite.}
+\item{Duality theory is much simpler for conic quadratic optimization.}
+\end{itemize}
+
+Ultimately, conic equivalents are not only as easy to solve as the original QP or QCQP problem, but
+in mose cases also need less space and have faster solution times.
 
 
 \end{document}
